@@ -20,18 +20,31 @@ class _HomeScreenState extends State<HomeScreen> {
   final _tasks = <Task>[];
   final _titleController = TextEditingController();
   int _totalGemas = 0;
+  String _userName = '';
+  bool _namePromptShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showNamePrompt());
+  }
+
+  void _showNamePrompt() async {
+    if (_namePromptShown) return;
+    _namePromptShown = true;
+    final name = await showNamePromptDialog(context);
+    if (mounted) {
+      setState(() => _userName = name ?? 'Usuario');
+    }
+  }
 
   void _addTask() async {
     final title = _titleController.text.trim();
     if (title.isEmpty) return;
 
-    final result = await showDifficultyDialog(context);
+    final result = await showCreateTaskDialog(context);
     if (result == null || !mounted) return;
-    final (dificultad, deadline) = result;
-
-    final config = await showTaskConfigDialog(context);
-    if (config == null || !mounted) return;
-    final (temporizada, esHabito) = config;
+    final (dificultad, deadline, temporizada, esHabito) = result;
 
     setState(() {
       _tasks.add(Task(
@@ -209,11 +222,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: AppColor.secundaryColor,
                       ),
                       const SizedBox(width: 8),
-                      Expanded(
+                      Flexible(
                         child: Text(
                           'Tareas Completadas',
                           style: TextStyle(fontSize: 15),
-                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
                         ),
                       ),
                     ],
@@ -224,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      appBar: MainAppbar(gemas: _totalGemas),
+      appBar: MainAppbar(gemas: _totalGemas, userName: _userName),
       body: Column(
         children: [
           Expanded(

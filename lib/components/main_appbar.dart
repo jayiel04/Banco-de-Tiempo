@@ -6,8 +6,9 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   final int gemas;
+  final String userName;
 
-  const MainAppbar({super.key, required this.gemas});
+  const MainAppbar({super.key, required this.gemas, required this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +29,11 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
           child: const Icon(Icons.person, size: 22, color: AppColor.primaryColor),
         ),
         const SizedBox(width: 8),
-        const Column(
+        Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Usuario', style: TextStyle(fontSize: 15)),
+            Text(userName, style: const TextStyle(fontSize: 15)),
           ],
         ),
         const SizedBox(width: 12),

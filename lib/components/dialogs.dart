@@ -5,9 +5,11 @@ import '../models/dificultad.dart';
 Future<T?> showAnimatedDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
+  bool barrierDismissible = true,
 }) {
   return showGeneralDialog<T>(
     context: context,
+    barrierDismissible: barrierDismissible,
     pageBuilder: (context, animation, secondaryAnimation) {
       final curved = CurvedAnimation(
         parent: animation,
@@ -347,6 +349,350 @@ Future<(bool, bool)?> showTaskConfigDialog(BuildContext context) {
                     ),
                   ),
                   child: const Text('Cancelar', style: TextStyle(fontSize: 15)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<(Dificultad, DateTime?, bool, bool)?> showCreateTaskDialog(BuildContext context) {
+  return showAnimatedDialog<(Dificultad, DateTime?, bool, bool)>(
+    context: context,
+    builder: (ctx) {
+      Dificultad selected = Dificultad.facil;
+      DateTime? deadline;
+      bool temporizada = false;
+      bool esHabito = false;
+
+      return StatefulBuilder(
+        builder: (ctx, setDialogState) => Card(
+          margin: const EdgeInsets.all(24),
+          elevation: 12,
+          shadowColor: Colors.black87,
+          color: AppColor.surfaceColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(2),
+            side: BorderSide(
+              color: AppColor.secundaryColor.withValues(alpha: 0.5),
+              width: 2,
+            ),
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Configuracion de la tarea',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 16),
+                  ...Dificultad.values.map(
+                    (d) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => setDialogState(() => selected = d),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: selected == d
+                                ? AppColor.secundaryColor
+                                : AppColor.primaryColor,
+                            foregroundColor: selected == d
+                                ? AppColor.backgraundColor
+                                : AppColor.fontColor,
+                            side: BorderSide(
+                              color: selected == d
+                                  ? AppColor.fontColor
+                                  : AppColor.secundaryColor,
+                              width: 2,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: Text.rich(
+                            TextSpan(
+                              text: '${d.name} - ',
+                              style: const TextStyle(fontSize: 15),
+                              children: [
+                                TextSpan(
+                                  text: '${d.gemas} gemas',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: AppColor.gemColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Divider(color: AppColor.secundaryColor),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Fecha limite',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final date = await showDatePicker(
+                          context: ctx,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 365),
+                          ),
+                        );
+                        if (date != null) {
+                          setDialogState(() => deadline = date);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.primaryColor,
+                        foregroundColor: AppColor.fontColor,
+                        side: const BorderSide(
+                          color: AppColor.secundaryColor,
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      child: Text(
+                        deadline != null
+                            ? '${deadline!.day}/${deadline!.month}/${deadline!.year}'
+                            : 'Seleccionar fecha',
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                  ),
+                  if (deadline != null) ...[
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => setDialogState(() => deadline = null),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.red.shade300,
+                          side: BorderSide(
+                            color: Colors.red.shade300.withValues(alpha: 0.5),
+                            width: 2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                        child: const Text(
+                          'Quitar fecha',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  const Divider(color: AppColor.secundaryColor),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: temporizada,
+                        onChanged: (v) => setDialogState(() => temporizada = v ?? false),
+                        activeColor: AppColor.timeColor,
+                        checkColor: AppColor.backgraundColor,
+                        side: BorderSide(
+                          color: AppColor.timeColor.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                      ),
+                      const Text(
+                        'Tarea temporizada',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: esHabito,
+                        onChanged: (v) => setDialogState(() => esHabito = v ?? false),
+                        activeColor: AppColor.gemColor,
+                        checkColor: AppColor.backgraundColor,
+                        side: BorderSide(
+                          color: AppColor.gemColor.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                      ),
+                      const Text(
+                        'Habito atomico\n(se repite diariamente)',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(
+                          ctx,
+                          (selected, deadline, temporizada, esHabito),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColor.primaryColor,
+                          foregroundColor: AppColor.fontColor,
+                          side: const BorderSide(
+                            color: AppColor.secundaryColor,
+                            width: 2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        child: const Text(
+                          'Confirmar',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(ctx, null),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: AppColor.secundaryColor,
+                          side: BorderSide(
+                            color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                            width: 2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        child: const Text(
+                          'Cancelar',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<String?> showNamePromptDialog(BuildContext context) {
+  return showAnimatedDialog<String>(
+    context: context,
+    barrierDismissible: false,
+    builder: (ctx) {
+      final controller = TextEditingController();
+      String? name;
+
+      return StatefulBuilder(
+        builder: (ctx, setDialogState) => Card(
+          margin: const EdgeInsets.all(24),
+          elevation: 12,
+          shadowColor: Colors.black87,
+          color: AppColor.surfaceColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(2),
+            side: BorderSide(
+              color: AppColor.secundaryColor.withValues(alpha: 0.5),
+              width: 2,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Bienvenido!',
+                  style: TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Como te llamas?',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    hintText: 'Tu nombre...',
+                    hintStyle: const TextStyle(fontSize: 13),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(2),
+                      borderSide: BorderSide(
+                        color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                        width: 2,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(2),
+                      borderSide: BorderSide(
+                        color: AppColor.secundaryColor.withValues(alpha: 0.3),
+                        width: 2,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(2),
+                      borderSide: const BorderSide(
+                        color: AppColor.secundaryColor,
+                        width: 2,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                  ),
+                  style: const TextStyle(fontSize: 13),
+                  onChanged: (v) => setDialogState(() => name = v.trim()),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    if (name != null && name!.isNotEmpty) {
+                      Navigator.pop(ctx, name);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: name != null && name!.isNotEmpty
+                        ? AppColor.primaryColor
+                        : AppColor.primaryColor.withValues(alpha: 0.5),
+                    foregroundColor: AppColor.fontColor,
+                    side: BorderSide(
+                      color: name != null && name!.isNotEmpty
+                          ? AppColor.secundaryColor
+                          : AppColor.secundaryColor.withValues(alpha: 0.3),
+                      width: 2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  child: const Text('Comenzar', style: TextStyle(fontSize: 15)),
                 ),
               ],
             ),
