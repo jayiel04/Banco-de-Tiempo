@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_color.dart';
-import 'home_screen.dart';
+import '../models/task.dart';
 
 class CalendarScreen extends StatefulWidget {
   final List<Task> tasks;

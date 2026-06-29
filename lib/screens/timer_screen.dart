@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../constants/app_color.dart';
-import 'home_screen.dart';
+import '../models/task.dart';
 
 class TimerScreen extends StatefulWidget {
   final Task task;

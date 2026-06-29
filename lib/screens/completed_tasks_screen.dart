@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_color.dart';
-import 'home_screen.dart';
+import '../models/task.dart';
 
 class CompletedTasksScreen extends StatelessWidget {
   final List<Task> tasks;
