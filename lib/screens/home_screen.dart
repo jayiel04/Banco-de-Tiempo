@@ -20,6 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final _tasks = <Task>[];
   final _titleController = TextEditingController();
   int _totalGemas = 0;
+  int _totalFocusSeconds = 0;
+  int _totalRestSeconds = 0;
   String _userName = '';
   bool _namePromptShown = false;
 
@@ -63,13 +65,17 @@ class _HomeScreenState extends State<HomeScreen> {
       final shouldStart = await showTimerStartDialog(context, task.titulo);
       if (shouldStart == true) {
         if (!mounted) return;
-        final gemasObtenidas = await Navigator.push<int>(
+        final result = await Navigator.push<(int, int)>(
           context,
           MaterialPageRoute(builder: (_) => TimerScreen(task: task)),
         );
         if (!mounted) return;
-        if (gemasObtenidas != null) {
-          setState(() => _totalGemas += gemasObtenidas);
+        if (result != null) {
+          final (gemas, seconds) = result;
+          setState(() {
+            _totalGemas += gemas;
+            _totalFocusSeconds += seconds;
+          });
         }
       }
     } else if (task.esHabito) {
@@ -121,9 +127,76 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => CompletedTasksScreen(tasks: _tasks),
+        builder: (_) => CompletedTasksScreen(
+          tasks: _tasks.where((t) => t.completada && !t.esHabito).toList(),
+        ),
       ),
     );
+  }
+
+  void _showBuyRestTime() async {
+    if (_totalGemas <= 0) {
+      if (mounted) {
+        await showAnimatedDialog(
+          context: context,
+          builder: (ctx) => Card(
+            margin: const EdgeInsets.all(24),
+            elevation: 12,
+            shadowColor: Colors.black87,
+            color: AppColor.surfaceColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(2),
+              side: BorderSide(
+                color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                width: 2,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'No tienes gemas',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Completa tareas para ganar gemas',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.primaryColor,
+                      foregroundColor: AppColor.fontColor,
+                      side: const BorderSide(
+                        color: AppColor.secundaryColor,
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    child: const Text('OK', style: TextStyle(fontSize: 15)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+      return;
+    }
+
+    final gemasGastar = await showBuyRestTimeDialog(context, _totalGemas);
+    if (gemasGastar == null || !mounted) return;
+
+    setState(() {
+      _totalGemas -= gemasGastar;
+      _totalRestSeconds += gemasGastar * 3 * 60;
+    });
   }
 
   void _showCalendar() {
@@ -233,11 +306,50 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showBuyRestTime();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: AppColor.fontColor,
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.free_breakfast,
+                        color: AppColor.gemColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Comprar tiempo libre',
+                          style: TextStyle(fontSize: 15),
+                          softWrap: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
-      appBar: MainAppbar(gemas: _totalGemas, userName: _userName),
+      appBar: MainAppbar(gemas: _totalGemas, userName: _userName, focusSeconds: _totalFocusSeconds, restSeconds: _totalRestSeconds),
       body: Column(
         children: [
           Expanded(

@@ -591,6 +591,153 @@ Future<bool?> showHabitConfirmDialog(BuildContext context, String titulo, int ge
   );
 }
 
+Future<int?> showBuyRestTimeDialog(BuildContext context, int gemasDisponibles) {
+  return showAnimatedDialog<int>(
+    context: context,
+    builder: (ctx) {
+      int gemasGastar = 1;
+
+      return StatefulBuilder(
+        builder: (ctx, setDialogState) => Card(
+          margin: const EdgeInsets.all(24),
+          elevation: 12,
+          shadowColor: Colors.black87,
+          color: AppColor.surfaceColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(2),
+            side: BorderSide(
+              color: AppColor.gemColor.withValues(alpha: 0.5),
+              width: 2,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Comprar tiempo libre',
+                  style: TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Tienes $gemasDisponibles gemas disponibles',
+                  style: const TextStyle(fontSize: 11),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Cada gema = 3 minutos de descanso',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: gemasGastar > 1
+                          ? () => setDialogState(() => gemasGastar--)
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: AppColor.fontColor,
+                        side: BorderSide(
+                          color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                      ),
+                      child: const Icon(Icons.remove, size: 18),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      '$gemasGastar',
+                      style: const TextStyle(fontSize: 40, color: AppColor.gemColor),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton(
+                      onPressed: gemasGastar < gemasDisponibles
+                          ? () => setDialogState(() => gemasGastar++)
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: AppColor.fontColor,
+                        side: BorderSide(
+                          color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                      ),
+                      child: const Icon(Icons.add, size: 18),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text.rich(
+                  TextSpan(
+                    text: 'Descanso: ',
+                    style: const TextStyle(fontSize: 13),
+                    children: [
+                      TextSpan(
+                        text: '${gemasGastar * 3} min',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: AppColor.timeColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, gemasGastar),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.primaryColor,
+                        foregroundColor: AppColor.fontColor,
+                        side: const BorderSide(
+                          color: AppColor.secundaryColor,
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      child: const Text('Canjear', style: TextStyle(fontSize: 15)),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, null),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: AppColor.secundaryColor,
+                        side: BorderSide(
+                          color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      child: const Text('Cancelar', style: TextStyle(fontSize: 15)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 Future<bool?> showTaskCompleteDialog(BuildContext context, String titulo) {
   return showAnimatedDialog<bool>(
     context: context,

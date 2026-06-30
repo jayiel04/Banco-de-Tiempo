@@ -21,8 +21,14 @@ class _TimerScreenState extends State<TimerScreen> {
   bool _isRunning = false;
   bool _isFinished = false;
 
+  int _estimatedMinutes() =>
+      int.tryParse(_minutesController.text.trim()) ?? 0;
+
+  int _totalGemas() =>
+      widget.task.dificultad.gemas + (_estimatedMinutes() ~/ 5);
+
   void _startTimer() {
-    final minutes = int.tryParse(_minutesController.text.trim()) ?? 0;
+    final minutes = _estimatedMinutes();
     if (minutes <= 0) return;
 
     final total = minutes * 60;
@@ -163,6 +169,23 @@ class _TimerScreenState extends State<TimerScreen> {
                                   ),
                                 ),
                                 style: const TextStyle(fontSize: 18),
+                                onChanged: (_) => setState(() {}),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text.rich(
+                              TextSpan(
+                                text: 'Dificultad: ${widget.task.dificultad.gemas} + Minutos: ${_estimatedMinutes()} = ',
+                                style: const TextStyle(fontSize: 11),
+                                children: [
+                                  TextSpan(
+                                    text: '${_totalGemas()} gemas',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: AppColor.gemColor,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -188,7 +211,7 @@ class _TimerScreenState extends State<TimerScreen> {
                     ElevatedButton(
                       onPressed: () {
                         widget.task.completada = true;
-                        Navigator.pop(context, widget.task.dificultad.gemas);
+                        Navigator.pop(context, (_totalGemas(), _totalSeconds));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,

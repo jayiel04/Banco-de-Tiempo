@@ -7,8 +7,17 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   final int gemas;
   final String userName;
+  final int focusSeconds;
+  final int restSeconds;
 
-  const MainAppbar({super.key, required this.gemas, required this.userName});
+  const MainAppbar({super.key, required this.gemas, required this.userName, required this.focusSeconds, required this.restSeconds});
+
+  String _formatTime(int seconds) {
+    final h = seconds ~/ 3600;
+    final m = (seconds % 3600) ~/ 60;
+    if (h > 0) return '${h}h ${m}m';
+    return '${m}m';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +46,20 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
         const SizedBox(width: 12),
+        const Icon(Icons.timer_outlined, size: 18, color: AppColor.timeColor),
+        const SizedBox(width: 4),
+        Text(
+          _formatTime(focusSeconds),
+          style: const TextStyle(fontSize: 13, color: AppColor.timeColor),
+        ),
+        const SizedBox(width: 10),
+        const Icon(Icons.free_breakfast, size: 18, color: AppColor.gemColor),
+        const SizedBox(width: 4),
+        Text(
+          _formatTime(restSeconds),
+          style: const TextStyle(fontSize: 13, color: AppColor.gemColor),
+        ),
+        const SizedBox(width: 10),
         Container(
           width: 28,
           height: 28,
@@ -48,7 +71,7 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
         const SizedBox(width: 6),
         Text('$gemas', style: const TextStyle(fontSize: 15, color: AppColor.gemColor)),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
       ],
     );
   }
