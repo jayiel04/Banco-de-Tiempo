@@ -5,8 +5,10 @@ import '../components/main_appbar.dart';
 import '../components/task_list.dart';
 import '../constants/app_color.dart';
 import '../models/task.dart';
+import '../services/storage_service.dart';
 import 'calendar_screen.dart';
 import 'completed_tasks_screen.dart';
+import 'profile_screen.dart';
 import 'rest_screen.dart';
 import 'timer_screen.dart';
 
@@ -29,15 +31,45 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _showNamePrompt());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadState());
+  }
+
+  Future<void> _loadState() async {
+    final name = await StorageService.loadUserName();
+    final gemas = await StorageService.loadTotalGemas();
+    final focusSeconds = await StorageService.loadTotalFocusSeconds();
+    final restSeconds = await StorageService.loadTotalRestSeconds();
+    final tasks = await StorageService.loadTasks();
+    if (!mounted) return;
+    setState(() {
+      _userName = name ?? '';
+      _totalGemas = gemas;
+      _totalFocusSeconds = focusSeconds;
+      _totalRestSeconds = restSeconds;
+      _tasks.addAll(tasks);
+    });
+    if (name == null || name.isEmpty) {
+      _showNamePrompt();
+    }
+  }
+
+  Future<void> _saveState() async {
+    await Future.wait([
+      StorageService.saveUserName(_userName),
+      StorageService.saveTotalGemas(_totalGemas),
+      StorageService.saveTotalFocusSeconds(_totalFocusSeconds),
+      StorageService.saveTotalRestSeconds(_totalRestSeconds),
+      StorageService.saveTasks(_tasks),
+    ]);
   }
 
   void _showNamePrompt() async {
     if (_namePromptShown) return;
     _namePromptShown = true;
     final name = await showNamePromptDialog(context);
-    if (mounted) {
-      setState(() => _userName = name ?? 'Usuario');
+    if (mounted && name != null) {
+      setState(() => _userName = name);
+      _saveState();
     }
   }
 
@@ -59,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ));
       _titleController.clear();
     });
+    _saveState();
   }
 
   void _onTaskTap(Task task) async {
@@ -77,6 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _totalGemas += gemas;
             _totalFocusSeconds += seconds;
           });
+          _saveState();
         }
       }
     } else if (task.esHabito) {
@@ -110,17 +144,19 @@ class _HomeScreenState extends State<HomeScreen> {
             task.ultimaCompletacion = today;
             _totalGemas += task.dificultad.gemas;
           });
+          _saveState();
         }
       }
     } else {
       final shouldComplete = await showTaskCompleteDialog(context, task.titulo);
-      if (shouldComplete == true) {
-        if (!mounted) return;
-        setState(() {
-          task.completada = true;
-          _totalGemas += task.dificultad.gemas;
-        });
-      }
+        if (shouldComplete == true) {
+          if (!mounted) return;
+          setState(() {
+            task.completada = true;
+            _totalGemas += task.dificultad.gemas;
+          });
+          _saveState();
+        }
     }
   }
 
@@ -151,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _totalGemas = gemas;
         _totalRestSeconds = restSeconds;
       });
+      _saveState();
     }
   }
 
@@ -159,6 +196,19 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => CalendarScreen(tasks: _tasks),
+      ),
+    );
+  }
+
+  void _showProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ProfileScreen(
+          totalFocusSeconds: _totalFocusSeconds,
+          totalRestSeconds: _totalRestSeconds,
+          tasks: _tasks,
+        ),
       ),
     );
   }
@@ -267,6 +317,45 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    _showProfile();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: AppColor.fontColor,
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.person,
+                        color: AppColor.fontColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Perfil',
+                          style: TextStyle(fontSize: 15),
+                          softWrap: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
                     _showRestScreen();
                   },
                   style: ElevatedButton.styleFrom(
@@ -304,7 +393,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      appBar: MainAppbar(gemas: _totalGemas, userName: _userName, focusSeconds: _totalFocusSeconds, restSeconds: _totalRestSeconds),
+      appBar: MainAppbar(
+        gemas: _totalGemas,
+        userName: _userName,
+        focusSeconds: _totalFocusSeconds,
+        restSeconds: _totalRestSeconds,
+        onAvatarTap: _showProfile,
+      ),
       body: Column(
         children: [
           Expanded(

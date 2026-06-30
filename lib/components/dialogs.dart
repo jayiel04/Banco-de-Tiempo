@@ -283,7 +283,7 @@ Future<String?> showNamePromptDialog(BuildContext context) {
 
       return StatefulBuilder(
         builder: (ctx, setDialogState) => Card(
-          margin: const EdgeInsets.all(24),
+          margin: const EdgeInsets.all(16),
           elevation: 12,
           shadowColor: Colors.black87,
           color: AppColor.surfaceColor,
@@ -295,20 +295,20 @@ Future<String?> showNamePromptDialog(BuildContext context) {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   'Bienvenido!',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 15),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 const Text(
                   'Como te llamas?',
                   style: TextStyle(fontSize: 13),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 TextField(
                   controller: controller,
                   decoration: InputDecoration(
@@ -337,13 +337,13 @@ Future<String?> showNamePromptDialog(BuildContext context) {
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 10,
+                      vertical: 8,
                     ),
                   ),
                   style: const TextStyle(fontSize: 13),
                   onChanged: (v) => setDialogState(() => name = v.trim()),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () {
                     if (name != null && name!.isNotEmpty) {
@@ -365,7 +365,7 @@ Future<String?> showNamePromptDialog(BuildContext context) {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text('Comenzar', style: TextStyle(fontSize: 15)),
+                  child: const Text('Comenzar', style: TextStyle(fontSize: 13)),
                 ),
               ],
             ),
@@ -380,7 +380,7 @@ Future<bool?> showTimerStartDialog(BuildContext context, String taskTitle) {
   return showAnimatedDialog<bool>(
     context: context,
     builder: (ctx) => Card(
-      margin: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(16),
       elevation: 12,
       shadowColor: Colors.black87,
       color: AppColor.surfaceColor,
@@ -392,16 +392,16 @@ Future<bool?> showTimerStartDialog(BuildContext context, String taskTitle) {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
               'Listo para empezar\nla tarea?',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 15),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               taskTitle,
               style: TextStyle(
@@ -409,7 +409,7 @@ Future<bool?> showTimerStartDialog(BuildContext context, String taskTitle) {
                 fontSize: 13,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -426,7 +426,7 @@ Future<bool?> showTimerStartDialog(BuildContext context, String taskTitle) {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text('Si', style: TextStyle(fontSize: 15)),
+                  child: const Text('Si', style: TextStyle(fontSize: 13)),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(ctx, false),
@@ -441,7 +441,7 @@ Future<bool?> showTimerStartDialog(BuildContext context, String taskTitle) {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text('No', style: TextStyle(fontSize: 15)),
+                  child: const Text('No', style: TextStyle(fontSize: 13)),
                 ),
               ],
             ),
@@ -456,7 +456,7 @@ Future<void> showHabitAlreadyDoneDialog(BuildContext context, int racha) {
   return showAnimatedDialog(
     context: context,
     builder: (ctx) => Card(
-      margin: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(16),
       elevation: 12,
       shadowColor: Colors.black87,
       color: AppColor.surfaceColor,
@@ -468,16 +468,16 @@ Future<void> showHabitAlreadyDoneDialog(BuildContext context, int racha) {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
               'Ya completaste\neste habito hoy!',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 15),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               'Racha: $racha ${racha == 1 ? 'dia' : 'dias'}',
               style: TextStyle(
@@ -485,7 +485,7 @@ Future<void> showHabitAlreadyDoneDialog(BuildContext context, int racha) {
                 fontSize: 13,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx),
               style: ElevatedButton.styleFrom(
@@ -499,7 +499,7 @@ Future<void> showHabitAlreadyDoneDialog(BuildContext context, int racha) {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              child: const Text('OK', style: TextStyle(fontSize: 15)),
+              child: const Text('OK', style: TextStyle(fontSize: 13)),
             ),
           ],
         ),
@@ -512,7 +512,7 @@ Future<bool?> showHabitConfirmDialog(BuildContext context, String titulo, int ge
   return showAnimatedDialog<bool>(
     context: context,
     builder: (ctx) => Card(
-      margin: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(16),
       elevation: 12,
       shadowColor: Colors.black87,
       color: AppColor.surfaceColor,
@@ -524,15 +524,15 @@ Future<bool?> showHabitConfirmDialog(BuildContext context, String titulo, int ge
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
               'Completar habito?',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 15),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               titulo,
               style: TextStyle(
@@ -540,7 +540,7 @@ Future<bool?> showHabitConfirmDialog(BuildContext context, String titulo, int ge
                 fontSize: 13,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               'Te daran $gemas gemas',
               style: TextStyle(
@@ -548,7 +548,7 @@ Future<bool?> showHabitConfirmDialog(BuildContext context, String titulo, int ge
                 fontSize: 11,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -565,7 +565,7 @@ Future<bool?> showHabitConfirmDialog(BuildContext context, String titulo, int ge
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text('Si', style: TextStyle(fontSize: 15)),
+                  child: const Text('Si', style: TextStyle(fontSize: 13)),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(ctx, false),
@@ -580,7 +580,7 @@ Future<bool?> showHabitConfirmDialog(BuildContext context, String titulo, int ge
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text('No', style: TextStyle(fontSize: 15)),
+                  child: const Text('No', style: TextStyle(fontSize: 13)),
                 ),
               ],
             ),
@@ -742,7 +742,7 @@ Future<bool?> showTaskCompleteDialog(BuildContext context, String titulo) {
   return showAnimatedDialog<bool>(
     context: context,
     builder: (ctx) => Card(
-      margin: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(16),
       elevation: 12,
       shadowColor: Colors.black87,
       color: AppColor.surfaceColor,
@@ -754,15 +754,15 @@ Future<bool?> showTaskCompleteDialog(BuildContext context, String titulo) {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
               'Marcar como completada?',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 15),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               titulo,
               style: TextStyle(
@@ -770,7 +770,7 @@ Future<bool?> showTaskCompleteDialog(BuildContext context, String titulo) {
                 fontSize: 13,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -787,7 +787,7 @@ Future<bool?> showTaskCompleteDialog(BuildContext context, String titulo) {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text('Si', style: TextStyle(fontSize: 15)),
+                  child: const Text('Si', style: TextStyle(fontSize: 13)),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(ctx, false),
@@ -802,7 +802,7 @@ Future<bool?> showTaskCompleteDialog(BuildContext context, String titulo) {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text('No', style: TextStyle(fontSize: 15)),
+                  child: const Text('No', style: TextStyle(fontSize: 13)),
                 ),
               ],
             ),

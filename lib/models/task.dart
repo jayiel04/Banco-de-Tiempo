@@ -20,4 +20,30 @@ class Task {
     this.racha = 0,
     this.completada = false,
   });
+
+  Map<String, dynamic> toJson() => {
+        'titulo': titulo,
+        'dificultad': dificultad.name,
+        'temporizada': temporizada,
+        'esHabito': esHabito,
+        'fechaLimite': fechaLimite?.millisecondsSinceEpoch,
+        'ultimaCompletacion': ultimaCompletacion?.millisecondsSinceEpoch,
+        'racha': racha,
+        'completada': completada,
+      };
+
+  factory Task.fromJson(Map<String, dynamic> json) => Task(
+        titulo: json['titulo'] as String,
+        dificultad: Dificultad.values.firstWhere((d) => d.name == json['dificultad']),
+        temporizada: json['temporizada'] as bool,
+        esHabito: json['esHabito'] as bool,
+        fechaLimite: json['fechaLimite'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(json['fechaLimite'] as int)
+            : null,
+        ultimaCompletacion: json['ultimaCompletacion'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(json['ultimaCompletacion'] as int)
+            : null,
+        racha: json['racha'] as int? ?? 0,
+        completada: json['completada'] as bool? ?? false,
+      );
 }
