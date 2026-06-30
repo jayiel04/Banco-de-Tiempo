@@ -15,6 +15,8 @@ class TimerScreen extends StatefulWidget {
 class _TimerScreenState extends State<TimerScreen> {
   final _minutesController = TextEditingController(text: '25');
   Timer? _timer;
+  int _totalSeconds = 0;
+  DateTime? _startTime;
   int _remainingSeconds = 0;
   bool _isRunning = false;
   bool _isFinished = false;
@@ -23,22 +25,28 @@ class _TimerScreenState extends State<TimerScreen> {
     final minutes = int.tryParse(_minutesController.text.trim()) ?? 0;
     if (minutes <= 0) return;
 
+    final total = minutes * 60;
     setState(() {
-      _remainingSeconds = minutes * 60;
+      _totalSeconds = total;
+      _remainingSeconds = total;
+      _startTime = DateTime.now();
       _isRunning = true;
       _isFinished = false;
     });
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_remainingSeconds > 0) {
-          _remainingSeconds--;
-        } else {
-          _timer?.cancel();
+      final elapsed = DateTime.now().difference(_startTime!).inSeconds;
+      final remaining = _totalSeconds - elapsed;
+      if (remaining <= 0) {
+        _timer?.cancel();
+        setState(() {
+          _remainingSeconds = 0;
           _isRunning = false;
           _isFinished = true;
-        }
-      });
+        });
+      } else {
+        setState(() => _remainingSeconds = remaining);
+      }
     });
   }
 
@@ -109,12 +117,12 @@ class _TimerScreenState extends State<TimerScreen> {
                           Text(
                             _isRunning
                                 ? _formatTime(_remainingSeconds)
-                                : '${_minutesController.text}:00',
+                                : 'Duracion',
                             style: TextStyle(
                                fontSize: _isRunning ? 56 : 40,
                                color: _isRunning
-                                   ? AppColor.timeColor
-                                   : AppColor.secundaryColor,
+                                    ? AppColor.timeColor
+                                    : AppColor.secundaryColor,
                             ),
                           ),
                           if (!_isRunning) ...[
