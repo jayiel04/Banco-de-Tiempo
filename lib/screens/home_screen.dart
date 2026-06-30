@@ -7,6 +7,7 @@ import '../constants/app_color.dart';
 import '../models/task.dart';
 import 'calendar_screen.dart';
 import 'completed_tasks_screen.dart';
+import 'rest_screen.dart';
 import 'timer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -134,69 +135,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showBuyRestTime() async {
-    if (_totalGemas <= 0) {
-      if (mounted) {
-        await showAnimatedDialog(
-          context: context,
-          builder: (ctx) => Card(
-            margin: const EdgeInsets.all(24),
-            elevation: 12,
-            shadowColor: Colors.black87,
-            color: AppColor.surfaceColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(2),
-              side: BorderSide(
-                color: AppColor.secundaryColor.withValues(alpha: 0.5),
-                width: 2,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'No tienes gemas',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Completa tareas para ganar gemas',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColor.primaryColor,
-                      foregroundColor: AppColor.fontColor,
-                      side: const BorderSide(
-                        color: AppColor.secundaryColor,
-                        width: 2,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    child: const Text('OK', style: TextStyle(fontSize: 15)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }
-      return;
+  void _showRestScreen() async {
+    final result = await Navigator.push<(int, int)>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RestScreen(
+          gemasDisponibles: _totalGemas,
+          restSecondsDisponibles: _totalRestSeconds,
+        ),
+      ),
+    );
+    if (result != null && mounted) {
+      final (gemas, restSeconds) = result;
+      setState(() {
+        _totalGemas = gemas;
+        _totalRestSeconds = restSeconds;
+      });
     }
-
-    final gemasGastar = await showBuyRestTimeDialog(context, _totalGemas);
-    if (gemasGastar == null || !mounted) return;
-
-    setState(() {
-      _totalGemas -= gemasGastar;
-      _totalRestSeconds += gemasGastar * 3 * 60;
-    });
   }
 
   void _showCalendar() {
@@ -312,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    _showBuyRestTime();
+                    _showRestScreen();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
@@ -335,11 +290,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 8),
                       Flexible(
-                        child: Text(
-                          'Comprar tiempo libre',
-                          style: TextStyle(fontSize: 15),
-                          softWrap: true,
-                        ),
+                          child: Text(
+                            'Tiempo libre',
+                            style: TextStyle(fontSize: 15),
+                            softWrap: true,
+                          ),
                       ),
                     ],
                   ),
