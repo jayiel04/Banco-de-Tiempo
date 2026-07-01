@@ -6,11 +6,13 @@ import 'task_card.dart';
 class SectionedTaskList extends StatelessWidget {
   final List<Task> tasks;
   final void Function(Task) onTaskTap;
+  final void Function(Task) onTaskLongPress;
 
   const SectionedTaskList({
     super.key,
     required this.tasks,
     required this.onTaskTap,
+    required this.onTaskLongPress,
   });
 
   @override
@@ -62,8 +64,8 @@ class SectionedTaskList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: isHabito
-                ? HabitCard(task: task, onTap: () => onTaskTap(task))
-                : TaskCard(task: task, onTap: () => onTaskTap(task)),
+                ? HabitCard(task: task, onTap: () => onTaskTap(task), onLongPress: () => onTaskLongPress(task))
+                : TaskCard(task: task, onTap: () => onTaskTap(task), onLongPress: () => onTaskLongPress(task)),
           ),
         );
       }

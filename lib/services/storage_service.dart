@@ -50,6 +50,17 @@ class StorageService {
   }
 
   static const _keyProfilePhotoPath = 'profilePhotoPath';
+  static const _keyNotificationPermissionAsked = 'notificationPermissionAsked';
+
+  static Future<bool> hasAskedNotificationPermission() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyNotificationPermissionAsked) ?? false;
+  }
+
+  static Future<void> markNotificationPermissionAsked() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyNotificationPermissionAsked, true);
+  }
 
   static Future<void> saveProfilePhotoPath(String path) async {
     final prefs = await SharedPreferences.getInstance();

@@ -15,6 +15,7 @@ class TimerScreen extends StatefulWidget {
 
 class _TimerScreenState extends State<TimerScreen> {
   static const _notificationId = 1;
+  static const _countdownNotificationId = 101;
   final _minutesController = TextEditingController(text: '25');
   Timer? _timer;
   int _totalSeconds = 0;
@@ -48,6 +49,7 @@ class _TimerScreenState extends State<TimerScreen> {
       if (remaining <= 0) {
         _timer?.cancel();
         NotificationService.cancelNotification(_notificationId);
+        NotificationService.cancelNotification(_countdownNotificationId);
         setState(() {
           _remainingSeconds = 0;
           _isRunning = false;
@@ -55,6 +57,11 @@ class _TimerScreenState extends State<TimerScreen> {
         });
       } else {
         setState(() => _remainingSeconds = remaining);
+        NotificationService.showCountdownNotification(
+          id: _countdownNotificationId,
+          title: widget.task.titulo,
+          body: 'Tiempo restante: ${_formatTime(remaining)}',
+        );
       }
     });
 
@@ -65,11 +72,17 @@ class _TimerScreenState extends State<TimerScreen> {
       title: 'Temporizador completado',
       body: 'Tu tarea "${widget.task.titulo}" ha terminado',
     );
+    NotificationService.showCountdownNotification(
+      id: _countdownNotificationId,
+      title: widget.task.titulo,
+      body: 'Tiempo restante: ${_formatTime(total)}',
+    );
   }
 
   void _stopTimer() {
     _timer?.cancel();
     NotificationService.cancelNotification(_notificationId);
+    NotificationService.cancelNotification(_countdownNotificationId);
     setState(() => _isRunning = false);
   }
 
@@ -83,6 +96,7 @@ class _TimerScreenState extends State<TimerScreen> {
   void dispose() {
     _timer?.cancel();
     NotificationService.cancelNotification(_notificationId);
+    NotificationService.cancelNotification(_countdownNotificationId);
     _minutesController.dispose();
     super.dispose();
   }

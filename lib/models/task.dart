@@ -1,11 +1,11 @@
 import 'dificultad.dart';
 
 class Task {
-  final String titulo;
-  final Dificultad dificultad;
-  final bool temporizada;
-  final bool esHabito;
-  final DateTime? fechaLimite;
+  String titulo;
+  Dificultad dificultad;
+  bool temporizada;
+  bool esHabito;
+  DateTime? fechaLimite;
   DateTime? ultimaCompletacion;
   int racha = 0;
   bool completada = false;

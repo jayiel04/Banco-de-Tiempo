@@ -20,6 +20,7 @@ class RestScreen extends StatefulWidget {
 
 class _RestScreenState extends State<RestScreen> {
   static const _notificationId = 2;
+  static const _countdownNotificationId = 102;
   late int _gemas;
   late int _restSeconds;
   final _minutesController = TextEditingController(text: '10');
@@ -41,6 +42,7 @@ class _RestScreenState extends State<RestScreen> {
   void dispose() {
     _timer?.cancel();
     NotificationService.cancelNotification(_notificationId);
+    NotificationService.cancelNotification(_countdownNotificationId);
     _minutesController.dispose();
     super.dispose();
   }
@@ -81,6 +83,7 @@ class _RestScreenState extends State<RestScreen> {
       if (remaining <= 0) {
         _timer?.cancel();
         NotificationService.cancelNotification(_notificationId);
+        NotificationService.cancelNotification(_countdownNotificationId);
         setState(() {
           _remainingSeconds = 0;
           _isRunning = false;
@@ -88,6 +91,11 @@ class _RestScreenState extends State<RestScreen> {
         });
       } else {
         setState(() => _remainingSeconds = remaining);
+        NotificationService.showCountdownNotification(
+          id: _countdownNotificationId,
+          title: 'Descanso',
+          body: 'Tiempo restante: ${_formatTime(remaining)}',
+        );
       }
     });
 
@@ -98,11 +106,17 @@ class _RestScreenState extends State<RestScreen> {
       title: 'Descanso completado',
       body: 'Tu tiempo de descanso ha terminado',
     );
+    NotificationService.showCountdownNotification(
+      id: _countdownNotificationId,
+      title: 'Descanso',
+      body: 'Tiempo restante: ${_formatTime(total)}',
+    );
   }
 
   void _stopRestTimer() {
     _timer?.cancel();
     NotificationService.cancelNotification(_notificationId);
+    NotificationService.cancelNotification(_countdownNotificationId);
     _restSeconds += _remainingSeconds;
     setState(() {
       _isRunning = false;

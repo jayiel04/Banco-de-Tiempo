@@ -5,8 +5,9 @@ import '../models/task.dart';
 class HabitCard extends StatelessWidget {
   final Task task;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
-  const HabitCard({super.key, required this.task, required this.onTap});
+  const HabitCard({super.key, required this.task, required this.onTap, required this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,7 @@ class HabitCard extends StatelessWidget {
       color: AppColor.gemColor.withValues(alpha: 0.08),
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(4, 12, 12, 12),
           child: Row(
@@ -98,8 +100,9 @@ class HabitCard extends StatelessWidget {
 class TaskCard extends StatelessWidget {
   final Task task;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
-  const TaskCard({super.key, required this.task, required this.onTap});
+  const TaskCard({super.key, required this.task, required this.onTap, required this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +118,7 @@ class TaskCard extends StatelessWidget {
       color: AppColor.surfaceColor,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(

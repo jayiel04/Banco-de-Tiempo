@@ -6,6 +6,7 @@ import '../components/task_list.dart';
 import '../constants/app_color.dart';
 import '../models/task.dart';
 import '../services/storage_service.dart';
+import '../services/notification_service.dart';
 import 'calendar_screen.dart';
 import 'completed_tasks_screen.dart';
 import 'profile_screen.dart';
@@ -70,7 +71,15 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted && name != null) {
       setState(() => _userName = name);
       _saveState();
+      _requestNotificationPermission();
     }
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    final alreadyAsked = await StorageService.hasAskedNotificationPermission();
+    if (alreadyAsked) return;
+    await NotificationService.requestPermission();
+    await StorageService.markNotificationPermissionAsked();
   }
 
   void _addTask() async {
@@ -157,6 +166,136 @@ class _HomeScreenState extends State<HomeScreen> {
           });
           _saveState();
         }
+    }
+  }
+
+  void _onTaskLongPress(Task task) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColor.surfaceColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(2)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit, color: AppColor.timeColor),
+              title: const Text('Editar', style: TextStyle(fontSize: 15)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _editTask(task);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.redAccent),
+              title: const Text('Eliminar', style: TextStyle(fontSize: 15)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _deleteTask(task);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _editTask(Task task) async {
+    final result = await showEditTaskDialog(context, task);
+    if (result == null || !mounted) return;
+    final (title, dificultad, deadline, temporizada, esHabito) = result;
+    setState(() {
+      task.titulo = title;
+      task.dificultad = dificultad;
+      task.fechaLimite = deadline;
+      task.temporizada = esHabito ? false : temporizada;
+      task.esHabito = esHabito;
+    });
+    _saveState();
+  }
+
+  void _deleteTask(Task task) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => Center(
+        child: Card(
+          margin: const EdgeInsets.symmetric(horizontal: 64, vertical: 24),
+          elevation: 12,
+          shadowColor: Colors.black87,
+          color: AppColor.surfaceColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(2),
+            side: BorderSide(
+              color: AppColor.secundaryColor.withValues(alpha: 0.5),
+              width: 2,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Eliminar tarea?',
+                  style: TextStyle(fontSize: 15),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  task.titulo,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColor.secundaryColor,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: AppColor.backgraundColor,
+                        side: const BorderSide(
+                          color: Colors.redAccent,
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      child: const Text('Si', style: TextStyle(fontSize: 13)),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: AppColor.secundaryColor,
+                        side: BorderSide(
+                          color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      child: const Text('No', style: TextStyle(fontSize: 13)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    if (confirm == true && mounted) {
+      setState(() => _tasks.remove(task));
+      _saveState();
     }
   }
 
@@ -406,6 +545,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: SectionedTaskList(
               tasks: _tasks,
               onTaskTap: _onTaskTap,
+              onTaskLongPress: _onTaskLongPress,
             ),
           ),
           AddTaskFooter(
