@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../constants/app_color.dart';
 import '../components/dialogs.dart';
+import '../services/notification_service.dart';
 
 class RestScreen extends StatefulWidget {
   final int gemasDisponibles;
@@ -18,6 +19,7 @@ class RestScreen extends StatefulWidget {
 }
 
 class _RestScreenState extends State<RestScreen> {
+  static const _notificationId = 2;
   late int _gemas;
   late int _restSeconds;
   final _minutesController = TextEditingController(text: '10');
@@ -38,6 +40,7 @@ class _RestScreenState extends State<RestScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    NotificationService.cancelNotification(_notificationId);
     _minutesController.dispose();
     super.dispose();
   }
@@ -77,6 +80,7 @@ class _RestScreenState extends State<RestScreen> {
       final remaining = _totalSeconds - elapsed;
       if (remaining <= 0) {
         _timer?.cancel();
+        NotificationService.cancelNotification(_notificationId);
         setState(() {
           _remainingSeconds = 0;
           _isRunning = false;
@@ -86,10 +90,19 @@ class _RestScreenState extends State<RestScreen> {
         setState(() => _remainingSeconds = remaining);
       }
     });
+
+    final endTime = DateTime.now().add(Duration(seconds: total));
+    NotificationService.scheduleTimerEndNotification(
+      endTime: endTime,
+      id: _notificationId,
+      title: 'Descanso completado',
+      body: 'Tu tiempo de descanso ha terminado',
+    );
   }
 
   void _stopRestTimer() {
     _timer?.cancel();
+    NotificationService.cancelNotification(_notificationId);
     _restSeconds += _remainingSeconds;
     setState(() {
       _isRunning = false;

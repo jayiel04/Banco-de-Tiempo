@@ -282,92 +282,94 @@ Future<String?> showNamePromptDialog(BuildContext context) {
       String? name;
 
       return StatefulBuilder(
-        builder: (ctx, setDialogState) => Card(
-          margin: const EdgeInsets.all(16),
-          elevation: 12,
-          shadowColor: Colors.black87,
-          color: AppColor.surfaceColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(2),
-            side: BorderSide(
-              color: AppColor.secundaryColor.withValues(alpha: 0.5),
-              width: 2,
+        builder: (ctx, setDialogState) => Center(
+          child: Card(
+            margin: const EdgeInsets.symmetric(horizontal: 64, vertical: 24),
+            elevation: 12,
+            shadowColor: Colors.black87,
+            color: AppColor.surfaceColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(2),
+              side: BorderSide(
+                color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                width: 2,
+              ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Bienvenido!',
-                  style: TextStyle(fontSize: 15),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Como te llamas?',
-                  style: TextStyle(fontSize: 13),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: controller,
-                  decoration: InputDecoration(
-                    hintText: 'Tu nombre...',
-                    hintStyle: const TextStyle(fontSize: 13),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(2),
-                      borderSide: BorderSide(
-                        color: AppColor.secundaryColor.withValues(alpha: 0.5),
-                        width: 2,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(2),
-                      borderSide: BorderSide(
-                        color: AppColor.secundaryColor.withValues(alpha: 0.3),
-                        width: 2,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(2),
-                      borderSide: const BorderSide(
-                        color: AppColor.secundaryColor,
-                        width: 2,
-                      ),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Bienvenido!',
+                    style: TextStyle(fontSize: 15),
                   ),
-                  style: const TextStyle(fontSize: 13),
-                  onChanged: (v) => setDialogState(() => name = v.trim()),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    if (name != null && name!.isNotEmpty) {
-                      Navigator.pop(ctx, name);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: name != null && name!.isNotEmpty
-                        ? AppColor.primaryColor
-                        : AppColor.primaryColor.withValues(alpha: 0.5),
-                    foregroundColor: AppColor.fontColor,
-                    side: BorderSide(
-                      color: name != null && name!.isNotEmpty
-                          ? AppColor.secundaryColor
-                          : AppColor.secundaryColor.withValues(alpha: 0.3),
-                      width: 2,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Como te llamas?',
+                    style: TextStyle(fontSize: 13),
                   ),
-                  child: const Text('Comenzar', style: TextStyle(fontSize: 13)),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      hintText: 'Tu nombre...',
+                      hintStyle: const TextStyle(fontSize: 13),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(2),
+                        borderSide: BorderSide(
+                          color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(2),
+                        borderSide: BorderSide(
+                          color: AppColor.secundaryColor.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(2),
+                        borderSide: const BorderSide(
+                          color: AppColor.secundaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                    ),
+                    style: const TextStyle(fontSize: 13),
+                    onChanged: (v) => setDialogState(() => name = v.trim()),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (name != null && name!.isNotEmpty) {
+                        Navigator.pop(ctx, name);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: name != null && name!.isNotEmpty
+                          ? AppColor.primaryColor
+                          : AppColor.primaryColor.withValues(alpha: 0.5),
+                      foregroundColor: AppColor.fontColor,
+                      side: BorderSide(
+                        color: name != null && name!.isNotEmpty
+                            ? AppColor.secundaryColor
+                            : AppColor.secundaryColor.withValues(alpha: 0.3),
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    child: const Text('Comenzar', style: TextStyle(fontSize: 13)),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -379,73 +381,76 @@ Future<String?> showNamePromptDialog(BuildContext context) {
 Future<bool?> showTimerStartDialog(BuildContext context, String taskTitle) {
   return showAnimatedDialog<bool>(
     context: context,
-    builder: (ctx) => Card(
-      margin: const EdgeInsets.all(16),
-      elevation: 12,
-      shadowColor: Colors.black87,
-      color: AppColor.surfaceColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(2),
-        side: BorderSide(
-          color: AppColor.secundaryColor.withValues(alpha: 0.5),
-          width: 2,
+    builder: (ctx) => Center(
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 64, vertical: 24),
+        elevation: 12,
+        shadowColor: Colors.black87,
+        color: AppColor.surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(2),
+          side: BorderSide(
+            color: AppColor.secundaryColor.withValues(alpha: 0.5),
+            width: 2,
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Listo para empezar\nla tarea?',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              taskTitle,
-              style: TextStyle(
-                color: AppColor.secundaryColor,
-                fontSize: 13,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Listo para empezar\nla tarea?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15),
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.primaryColor,
-                    foregroundColor: AppColor.fontColor,
-                    side: const BorderSide(
-                      color: AppColor.secundaryColor,
-                      width: 2,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  child: const Text('Si', style: TextStyle(fontSize: 13)),
+              const SizedBox(height: 4),
+              Text(
+                taskTitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColor.secundaryColor,
+                  fontSize: 13,
                 ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: AppColor.secundaryColor,
-                    side: BorderSide(
-                      color: AppColor.secundaryColor.withValues(alpha: 0.5),
-                      width: 2,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.primaryColor,
+                      foregroundColor: AppColor.fontColor,
+                      side: const BorderSide(
+                        color: AppColor.secundaryColor,
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+                    child: const Text('Si', style: TextStyle(fontSize: 13)),
                   ),
-                  child: const Text('No', style: TextStyle(fontSize: 13)),
-                ),
-              ],
-            ),
-          ],
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: AppColor.secundaryColor,
+                      side: BorderSide(
+                        color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    child: const Text('No', style: TextStyle(fontSize: 13)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     ),
@@ -741,72 +746,75 @@ Future<int?> showBuyRestTimeDialog(BuildContext context, int gemasDisponibles) {
 Future<bool?> showTaskCompleteDialog(BuildContext context, String titulo) {
   return showAnimatedDialog<bool>(
     context: context,
-    builder: (ctx) => Card(
-      margin: const EdgeInsets.all(16),
-      elevation: 12,
-      shadowColor: Colors.black87,
-      color: AppColor.surfaceColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(2),
-        side: BorderSide(
-          color: AppColor.secundaryColor.withValues(alpha: 0.5),
-          width: 2,
+    builder: (ctx) => Center(
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 64, vertical: 24),
+        elevation: 12,
+        shadowColor: Colors.black87,
+        color: AppColor.surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(2),
+          side: BorderSide(
+            color: AppColor.secundaryColor.withValues(alpha: 0.5),
+            width: 2,
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Marcar como completada?',
-              style: TextStyle(fontSize: 15),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              titulo,
-              style: TextStyle(
-                color: AppColor.secundaryColor,
-                fontSize: 13,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Marcar como completada?',
+                style: TextStyle(fontSize: 15),
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.primaryColor,
-                    foregroundColor: AppColor.fontColor,
-                    side: const BorderSide(
-                      color: AppColor.secundaryColor,
-                      width: 2,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  child: const Text('Si', style: TextStyle(fontSize: 13)),
+              const SizedBox(height: 4),
+              Text(
+                titulo,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColor.secundaryColor,
+                  fontSize: 13,
                 ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: AppColor.secundaryColor,
-                    side: BorderSide(
-                      color: AppColor.secundaryColor.withValues(alpha: 0.5),
-                      width: 2,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.primaryColor,
+                      foregroundColor: AppColor.fontColor,
+                      side: const BorderSide(
+                        color: AppColor.secundaryColor,
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+                    child: const Text('Si', style: TextStyle(fontSize: 13)),
                   ),
-                  child: const Text('No', style: TextStyle(fontSize: 13)),
-                ),
-              ],
-            ),
-          ],
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: AppColor.secundaryColor,
+                      side: BorderSide(
+                        color: AppColor.secundaryColor.withValues(alpha: 0.5),
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    child: const Text('No', style: TextStyle(fontSize: 13)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     ),

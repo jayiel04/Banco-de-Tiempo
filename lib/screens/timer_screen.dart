@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../constants/app_color.dart';
 import '../models/task.dart';
+import '../services/notification_service.dart';
 
 class TimerScreen extends StatefulWidget {
   final Task task;
@@ -13,6 +14,7 @@ class TimerScreen extends StatefulWidget {
 }
 
 class _TimerScreenState extends State<TimerScreen> {
+  static const _notificationId = 1;
   final _minutesController = TextEditingController(text: '25');
   Timer? _timer;
   int _totalSeconds = 0;
@@ -45,6 +47,7 @@ class _TimerScreenState extends State<TimerScreen> {
       final remaining = _totalSeconds - elapsed;
       if (remaining <= 0) {
         _timer?.cancel();
+        NotificationService.cancelNotification(_notificationId);
         setState(() {
           _remainingSeconds = 0;
           _isRunning = false;
@@ -54,10 +57,19 @@ class _TimerScreenState extends State<TimerScreen> {
         setState(() => _remainingSeconds = remaining);
       }
     });
+
+    final endTime = DateTime.now().add(Duration(seconds: total));
+    NotificationService.scheduleTimerEndNotification(
+      endTime: endTime,
+      id: _notificationId,
+      title: 'Temporizador completado',
+      body: 'Tu tarea "${widget.task.titulo}" ha terminado',
+    );
   }
 
   void _stopTimer() {
     _timer?.cancel();
+    NotificationService.cancelNotification(_notificationId);
     setState(() => _isRunning = false);
   }
 
@@ -70,6 +82,7 @@ class _TimerScreenState extends State<TimerScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    NotificationService.cancelNotification(_notificationId);
     _minutesController.dispose();
     super.dispose();
   }
